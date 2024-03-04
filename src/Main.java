@@ -8,7 +8,7 @@ public class Main {
     public static void main(String[] args) {
         StudentManagement studentManagement = new StudentManagement();
 
-        loadStudentsFromFile(studentManagement, "student.txt");
+        loadStudentsFromFile(studentManagement, "student.txt", "index.txt");
         Scanner scanner = new Scanner(System.in);
 
         while (true) {
@@ -150,7 +150,7 @@ public class Main {
                     studentManagement.displayStudents();
                     break;
                 case 8:
-                    studentManagement.writeToFile("student.txt");
+                    studentManagement.writeToFile("student.txt", "index.txt");
                     break;
                 case 9:
                     System.out.println("Exiting program...");
@@ -180,28 +180,36 @@ public class Main {
 //        }
 //    }
 
-    private static void loadStudentsFromFile(StudentManagement studentManagement, String filename) {
+    private static void loadStudentsFromFile(StudentManagement studentManagement, String filename, String indexFilename) {
         File file = new File(filename);
-        if (!file.exists()) {
-            try {
-                file.createNewFile();
-                System.out.println("File 'student.txt' created.");
-            } catch (IOException e) {
-                System.out.println("An error occurred while creating file: " + e.getMessage());
-            }
-            return;
-        }
+        File indexFile = new File(indexFilename);
 
+        if (!indexFile.exists()) {
+            studentManagement.loadIndex(1);
+            return;
+        }else {
+            try (Scanner scanner = new Scanner(indexFile)) {
+                while (scanner.hasNextLine()) {
+                    String[] data = scanner.nextLine().split(",");
+                    int index = Integer.parseInt(data[0]);
+                    studentManagement.loadIndex(index);
+                }
+                System.out.println("Index has been loaded from file successfully.");
+            } catch (FileNotFoundException e) {
+                System.out.println("File not found: " + e.getMessage());
+            }
+        }
         try (Scanner scanner = new Scanner(file)) {
             while (scanner.hasNextLine()) {
                 String[] data = scanner.nextLine().split(",");
+                int id = Integer.parseInt(data[0]);
                 String name = data[1];
                 String gender = data[2];
                 int age = Integer.parseInt(data[3]);
                 double mathScore = Double.parseDouble(data[4]);
                 double physicsScore = Double.parseDouble(data[5]);
                 double chemistryScore = Double.parseDouble(data[6]);
-                studentManagement.addStudent(new Student(name, gender, age, mathScore, physicsScore, chemistryScore));
+                studentManagement.addStudent(new Student(id, name, gender, age, mathScore, physicsScore, chemistryScore));
             }
             System.out.println("Data has been loaded from file successfully.");
         } catch (FileNotFoundException e) {

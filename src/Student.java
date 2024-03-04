@@ -28,7 +28,7 @@ import java.util.Scanner;
 class Student {
     private static int nextId = 1;
 
-    private int id;
+    private final int id;
     private String name;
     private String gender;
     private int age;
@@ -40,6 +40,18 @@ class Student {
 
     public Student(String name, String gender, int age, double mathScore, double physicsScore, double chemistryScore) {
         this.id = nextId++;
+        this.name = name;
+        this.gender = gender;
+        this.age = age;
+        this.mathScore = mathScore;
+        this.physicsScore = physicsScore;
+        this.chemistryScore = chemistryScore;
+        this.averageScore = (mathScore + physicsScore + chemistryScore) / 3;
+        this.setAcademicPerformance();
+    }
+
+    public Student(int id, String name, String gender, int age, double mathScore, double physicsScore, double chemistryScore) {
+        this.id = id;
         this.name = name;
         this.gender = gender;
         this.age = age;
@@ -78,10 +90,9 @@ class Student {
         this.averageScore = averageScore;
     }
 
-    public void setAcademicPerformance(String academicPerformance) {
-        this.academicPerformance = academicPerformance;
+    public static int getNextId(){
+        return nextId;
     }
-
     public int getId() {
         return id;
     }
@@ -129,11 +140,19 @@ class Student {
             this.academicPerformance = "Weak";
         }
     }
+
+    public static void setNextId(int nextID){
+        nextId = nextID;
+    }
+
 }
 
 class StudentManagement {
     private ArrayList<Student> students = new ArrayList<>();
 
+    public void loadIndex(int index){
+        Student.setNextId(index);
+    }
     public void addStudent(Student student) {
         students.add(student);
     }
@@ -188,7 +207,7 @@ class StudentManagement {
         }
     }
 
-    public void writeToFile(String filename) {
+    public void writeToFile(String filename, String indexFilename) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
             for (Student student : students) {
                 writer.println(student.getId() + "," +
@@ -202,6 +221,21 @@ class StudentManagement {
                         student.getAcademicPerformance());
             }
             System.out.println("Data has been written to file successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to file: " + e.getMessage());
+        }
+        try (PrintWriter writer = new PrintWriter(new FileWriter(indexFilename))) {
+            writer.println(Student.getNextId());
+            System.out.println("Last Index has been written to file successfully.");
+        } catch (IOException e) {
+            System.out.println("An error occurred while writing to file: " + e.getMessage());
+        }
+    }
+
+    public void writeNextIdToFile(String filename) {
+        try (PrintWriter writer = new PrintWriter(new FileWriter(filename))) {
+            writer.println(Student.getNextId());
+            System.out.println("Last Index has been written to file successfully.");
         } catch (IOException e) {
             System.out.println("An error occurred while writing to file: " + e.getMessage());
         }
