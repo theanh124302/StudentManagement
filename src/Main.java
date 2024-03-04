@@ -13,6 +13,7 @@ public class Main {
 
         while (true) {
             System.out.println("\nMenu:");
+            System.out.println("0. Add Priority Student");
             System.out.println("1. Add Student");
             System.out.println("2. Update Student");
             System.out.println("3. Remove Student");
@@ -33,6 +34,36 @@ public class Main {
             double physicsScore = 0.0;
             double chemistryScore = 0.0;
             switch (option) {
+                case 0:
+                    System.out.print("Enter priority student's name: ");
+                    name = scanner.nextLine();
+                    do {
+                        System.out.print("Enter student's gender (male/female): ");
+                        gender = scanner.nextLine();
+                    } while (!gender.equalsIgnoreCase("male") && !gender.equalsIgnoreCase("female"));
+
+                    do {
+                        System.out.print("Enter student's age: ");
+                        age = scanner.nextInt();
+                    } while (age <= 0);
+
+                    do {
+                        System.out.print("Enter student's math score (0-10): ");
+                        mathScore = scanner.nextDouble();
+                    } while (mathScore < 0 || mathScore > 10);
+
+                    do {
+                        System.out.print("Enter student's physics score (0-10): ");
+                        physicsScore = scanner.nextDouble();
+                    } while (physicsScore < 0 || physicsScore > 10);
+
+                    do {
+                        System.out.print("Enter student's chemistry score (0-10): ");
+                        chemistryScore = scanner.nextDouble();
+                    } while (chemistryScore < 0 || chemistryScore > 10);
+
+                    studentManagement.addStudent(new PriorityStudent(name, gender, age, mathScore, physicsScore, chemistryScore));
+                    break;
                 case 1:
                     System.out.print("Enter student's name: ");
                     name = scanner.nextLine();
